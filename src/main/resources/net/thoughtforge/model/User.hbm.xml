@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping default-access="field">
+    <joined-subclass name="net.thoughtforge.model.User"
+    		extends="net.thoughtforge.model.UserTokenHolder"
+    		table="User">
+
+        <key column="id" not-null="true"/>
+        
+        <property name="firstName" type="java.lang.String" access="field" column="firstName"/>
+
+        <property name="lastName" type="java.lang.String" access="field" column="lastName"/>
+
+        <property name="password" type="java.lang.String" access="field" column="password"/>
+
+        <set name="userGroups" inverse="false" lazy="true" table="User_UserGroup_userGroups" fetch="select">
+            <key column="userTokenHolderIndexId" not-null="true"/>
+            
+            <many-to-many entity-name="net.thoughtforge.model.UserGroup">
+                <column name="userTokenIndexId" not-null="true"/>
+            </many-to-many>
+        </set>
+        
+        <property name="username" type="java.lang.String" access="field" column="username"/>
+    </joined-subclass>
+    
+    <query name="user.findByLastName">
+        from User
+        where lastName like ?
+    </query>
+
+    <query name="user.findByLastName.count">
+        select count(*)
+        from User
+        where lastName like ?
+    </query>
+        
+    <query name="user.findByUsername">
+        from User
+        where username = ?
+    </query>
+    
+</hibernate-mapping>
